@@ -118,19 +118,49 @@ namespace SimpleNotesApplication
                 // Load the document
                 try {
                     doc.Load(NoteDirectory + FileName);
-                    Console.Write(doc.SelectSingleNode("//body").InnerText);
-                    string ReadInput = Console.ReadLine();
 
-                    if(ReadInput.ToLower() == "cancel") {
+                    // Show the notes
+                    int NumNotes = doc.SelectNodes("//body").Count;
+                    for (int i = 0; i < NumNotes; i++) {
+                        Console.WriteLine(i + "  " + doc.SelectNodes("//body").Item(i).InnerText);
+                    }
+
+                    Console.WriteLine("\n  --Write 'cancel' to cancel anytime--\n");
+
+                    // Read input for which line to be edited
+                    Console.WriteLine("Which line would you want to edit: ");
+                    string Num = Console.ReadLine();
+
+                    if (Num.ToLower() == "cancel") {
                         Main(null);
                     } else {
-                        string newText = doc.SelectSingleNode("//body").InnerText = ReadInput;
+                        int LineNum = -1;
+                        try {
+                            LineNum = Int32.Parse(Num);
 
-                        doc.Save(NoteDirectory + FileName);
+                            if (LineNum < 0 || LineNum >= NumNotes) {
+                                Console.WriteLine("The given number is not within the range.");
+                                Main(null);
+                            }
+
+                            Console.WriteLine("Enter the new note:");
+                            string ReadInput = Console.ReadLine();
+
+                            if (ReadInput.ToLower() == "cancel") {
+                                Main(null);
+                            } else {
+                                string newText = doc.SelectNodes("//body").Item(LineNum).InnerText = ReadInput;
+
+                                doc.Save(NoteDirectory + FileName);
+                            }
+                        }
+                        catch (FormatException ex) {
+                            Console.WriteLine("Error given: " + ex.Message);
+                        }
                     }
                 }
                 catch (Exception ex) {
-                    Console.WriteLine("Could not edit note follosing error occurred: " + ex.Message);
+                    Console.WriteLine("Could not edit note following error occurred: " + ex.Message);
                 }
             } else {
                 Console.WriteLine("File not found\n");
