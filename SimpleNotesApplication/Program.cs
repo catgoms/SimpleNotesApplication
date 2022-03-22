@@ -3,6 +3,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace SimpleNotesApplication
 {
@@ -67,9 +68,22 @@ namespace SimpleNotesApplication
 
         private static void NewNote()
         {
-            // Read user input
-            Console.WriteLine("Please Enter Notes:\n");
-            string input = Console.ReadLine(); 
+            // Read file name
+            Console.WriteLine("Please Enter The File Name:\n");
+            string FileName = Console.ReadLine() + ".xml";
+
+            // Read note input
+            Console.WriteLine("\nPlease Enter Notes:");
+            Console.WriteLine("  --To finish writing, enter '**save'--\n");
+            int i = 0;
+            List<string> Inputs = new List<string>();
+            string Note;
+            do {
+                Note = Console.ReadLine();
+                Inputs.Add(Note);
+            } while (Note != "**save");
+
+            Inputs.Remove("**save");
 
             // Add XML settings
             XmlWriterSettings NoteSettings = new XmlWriterSettings();
@@ -78,14 +92,13 @@ namespace SimpleNotesApplication
             NoteSettings.ConformanceLevel = ConformanceLevel.Auto;
             NoteSettings.Indent = true;
 
-            // File name to be date format
-            string FileName = DateTime.Now.ToString("dd-MM-yy") + ".xml";
-
             // Write the file
             using (XmlWriter NewNote = XmlWriter.Create(NoteDirectory + FileName, NoteSettings)) {
                 NewNote.WriteStartDocument();
                 NewNote.WriteStartElement("Note");
-                NewNote.WriteElementString("body", input);
+                foreach (var item in Inputs) {
+                    NewNote.WriteElementString("body", item);
+                }
                 NewNote.WriteEndElement();
 
                 NewNote.Flush();
