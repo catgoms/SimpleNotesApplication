@@ -113,16 +113,16 @@ namespace SimpleNotesApplication
             string FileName = Console.ReadLine().ToLower();
             
             if (File.Exists(NoteDirectory + FileName)) {
-                XmlDocument doc = new XmlDocument();
+                XmlDocument Doc = new XmlDocument();
 
                 // Load the document
                 try {
-                    doc.Load(NoteDirectory + FileName);
+                    Doc.Load(NoteDirectory + FileName);
 
                     // Show the notes
-                    int NumNotes = doc.SelectNodes("//body").Count;
+                    int NumNotes = Doc.SelectNodes("//body").Count;
                     for (int i = 0; i < NumNotes; i++) {
-                        Console.WriteLine(i + "  " + doc.SelectNodes("//body").Item(i).InnerText);
+                        Console.WriteLine(i + "  " + Doc.SelectNodes("//body").Item(i).InnerText);
                     }
 
                     Console.WriteLine("\n  --Write 'cancel' to cancel anytime--\n");
@@ -149,9 +149,9 @@ namespace SimpleNotesApplication
                             if (ReadInput.ToLower() == "cancel") {
                                 Main(null);
                             } else {
-                                string newText = doc.SelectNodes("//body").Item(LineNum).InnerText = ReadInput;
+                                string newText = Doc.SelectNodes("//body").Item(LineNum).InnerText = ReadInput;
 
-                                doc.Save(NoteDirectory + FileName);
+                                Doc.Save(NoteDirectory + FileName);
                             }
                         }
                         catch (FormatException ex) {
@@ -176,7 +176,10 @@ namespace SimpleNotesApplication
                 XmlDocument Doc = new XmlDocument();
                 Doc.Load(NoteDirectory + FileName);
 
-                Console.WriteLine(Doc.SelectSingleNode("//body").InnerText);
+                int NumNotes = Doc.SelectNodes("//body").Count;
+                for (int i = 0; i < NumNotes; i++) {
+                    Console.WriteLine(Doc.SelectNodes("//body").Item(i).InnerText);
+                }
             } else {
                 Console.WriteLine("File not found");
             }
