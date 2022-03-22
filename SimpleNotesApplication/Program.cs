@@ -86,6 +86,80 @@ namespace SimpleNotesApplication
 
         private static void EditNote()
         {
+            Console.WriteLine("Please enter file name.\n");
+
+            string FileName = Console.ReadLine().ToLower();
+            
+            if (File.Exists(NoteDirectory + FileName)) {
+                XmlDocument doc = new XmlDocument();
+
+                try {
+                    doc.Load(NoteDirectory + FileName);
+                    Console.Write(doc.SelectSingleNode("//body").InnerText);
+                    string ReadInput = Console.ReadLine();
+
+                    if(ReadInput.ToLower() == "cancel") {
+                        Main(null);
+                    } else {
+                        string newText = doc.SelectSingleNode("//body").InnerText = ReadInput;
+
+                        doc.Save(NoteDirectory + FileName);
+                    }
+                }
+                catch (Exception ex) {
+                    Console.WriteLine("Could not edit note follosing error occurred: " + ex.Message);
+                }
+            } else {
+                Console.WriteLine("File not found\n");
+            }
+        }
+
+        private static void DeleteNote()
+        {
+            Console.WriteLine("Please enter file name\n");
+
+            string FileName = Console.ReadLine();
+
+            if (File.Exists(NoteDirectory + FileName)) {
+                Console.WriteLine(Environment.NewLine + "Are you sure you wish to delete this file? Y/N\n");
+
+                string Confirmation = Console.ReadLine().ToLower();
+
+                if (Confirmation == "y") {
+                    try {
+                        File.Delete(NoteDirectory + FileName);
+
+                        Console.WriteLine("File has been deleted\n");
+                    }
+                    catch(Exception ex) {
+                        Console.WriteLine("File not deleted following erro occured: " + ex.Message);
+                    }
+                } else if (Confirmation == "n") {
+                    Main(null);
+                } else {
+                    Console.WriteLine("Invalid command\n");
+
+                    DeleteNote();
+                }
+            } else {
+                Console.WriteLine("File does not exist\n");
+
+                DeleteNote();
+            }
+        }
+
+        private static void CommandsAvailable()
+        {
+            Console.WriteLine(" New - Create a new note\n Edit - Edit a note\n Read -  Read a note\n ShowNotes - List all notes\n Exit - Exit the application\n Dir - Opens note directory\n Help - Shows this help message\n");
+        }
+
+        private static void Exit()
+        {
+            Environment.Exit(0);
+        }
+
+        private static void ShowNotes()
+        {
 
         }
 
